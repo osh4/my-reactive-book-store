@@ -1,0 +1,32 @@
+version: '3.3'
+
+services:
+  database:
+    image: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASS}"
+      POSTGRES_DB: "${DB_NAME}"
+      PGDATA: /data/postgres
+    ports:
+      - "127.0.0.1:${DB_PORT}:${DB_PORT}"
+    volumes:
+      - bookstore-db:/data/postgres
+
+  book-service:
+    build: ./
+    ports:
+      - "127.0.0.1:${SERVER_PORT}:${SERVER_PORT}"
+    depends_on:
+      - database
+    links:
+      - database
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:${SERVER_PORT}/" ]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  bookstore-db:
