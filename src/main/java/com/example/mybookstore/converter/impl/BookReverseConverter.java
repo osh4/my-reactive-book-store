@@ -27,7 +27,16 @@ public class BookReverseConverter implements Converter<BookData, Book> {
         book.setDescription(source.getDescription());
         book.setPublishingDate(source.getPublishingDate());
         book.setPrice(source.getPrice());
-        authorRepository.findById(source.getAuthorEmail()).ifPresent(book::setAuthor);
+        Optional<Author> authorOptional = authorRepository.findById(source.getAuthorEmail());
+        Author author = null;
+        if (authorOptional.isEmpty()) {
+            AuthorData data = new AuthorData();
+            data.setEmail(source.getAuthorEmail());
+            data.setName(source.getAuthorName());
+            author = authorReverseConverter.convert(data);
+            authorRepository.save(author);
+        }
+        book.setAuthor(authorOptional.orElse(author));
         return book;
     }
 }
