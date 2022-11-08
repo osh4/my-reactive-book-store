@@ -1,6 +1,7 @@
 package com.example.mybookstore.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,7 +14,13 @@ import java.util.Set;
 @Entity
 @Setter
 @Getter
+@NoArgsConstructor
 public class Role implements GrantedAuthority {
+
+    public Role(String name) {
+        this.name = name;
+    }
+
     @Id
     @Column(nullable = false, unique = true)
     private String name;
