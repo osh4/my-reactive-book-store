@@ -16,9 +16,9 @@ spring:
       ddl-auto: create
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://database:5432/book-store
-    username: postgres
-    password: postgres321
+    url: jdbc:postgresql://localhost:5432/postgres
+    username:
+    password:
   sql:
     init:
       mode: always
