@@ -22,7 +22,7 @@ public class BookStoreUser implements UserDetails {
     @Column(unique = true)
     private String name;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
     @ManyToMany
