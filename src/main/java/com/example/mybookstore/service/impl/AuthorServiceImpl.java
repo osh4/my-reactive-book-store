@@ -8,17 +8,15 @@ import com.example.mybookstore.repository.AuthorRepository;
 import com.example.mybookstore.repository.BookRepository;
 import com.example.mybookstore.service.AuthorService;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
-@Service
-@Qualifier("authorService")
+@Component
 public class AuthorServiceImpl implements AuthorService {
 
     private final AuthorReverseConverter authorReverseConverter;
