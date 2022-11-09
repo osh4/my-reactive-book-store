@@ -9,24 +9,23 @@ services:
       POSTGRES_PASSWORD: "${DB_PASS}"
       POSTGRES_DB: "${DB_NAME}"
       PGDATA: /data/postgres
-    ports:
-      - "127.0.0.1:${DB_PORT}:${DB_PORT}"
-    volumes:
-      - bookstore-db:/data/postgres
+    networks:
+      - bookstore-internal
 
   book-service:
     build: ./
+    restart: unless-stopped
     ports:
       - "127.0.0.1:${SERVER_PORT}:${SERVER_PORT}"
     depends_on:
       - database
-    links:
-      - database
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:${SERVER_PORT}/" ]
-      interval: 1m30s
-      timeout: 10s
-      retries: 3
+    environment:
+      SPRING_DATASOURCE_URL: "${DB_URL}"
+      SPRING_DATASOURCE_USERNAME: "${DB_USER}"
+      SPRING_DATASOURCE_PASSWORD: "${DB_PASS}"
+      SERVER_PORT: "${SERVER_PORT}"
+    networks:
+      - bookstore-internal
 
-volumes:
-  bookstore-db:
+networks:
+  bookstore-internal:
