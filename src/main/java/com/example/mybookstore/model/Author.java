@@ -15,7 +15,7 @@ public class Author extends BookStoreUser {
 
     @Column
     private LocalDate birthDate;
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
     private Set<Book> books;
 
 }

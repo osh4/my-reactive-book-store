@@ -25,7 +25,6 @@ public class Role implements GrantedAuthority {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @Transient
     @ManyToMany(mappedBy = "roles")
     private Set<BookStoreUser> bookStoreUsers = new LinkedHashSet<>();
 

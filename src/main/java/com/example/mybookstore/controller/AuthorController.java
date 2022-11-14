@@ -17,16 +17,15 @@ public class AuthorController {
 
     private final AuthorService authorService;
 
-
     @GetMapping("/author")
-    private ResponseEntity<List<AuthorData>> getAuthors() {
+    public ResponseEntity<List<AuthorData>> getAuthors() {
         final List<AuthorData> authors = authorService.getAllAuthors();
         return ResponseEntity.ok(authors);
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured("ROLE_ADMIN")
     @PostMapping("/author")
-    private ResponseEntity<?> addAuthor(@RequestBody AuthorData authorData) {
+    public ResponseEntity<?> addAuthor(@RequestBody AuthorData authorData) {
         try {
             authorService.addAuthor(authorData);
             return ResponseEntity.ok(authorData);
@@ -36,7 +35,7 @@ public class AuthorController {
         }
     }
 
-    @Secured({"ROLE_ADMIN"})
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/author")
     private ResponseEntity<?> removeAuthor(@RequestBody AuthorData authorData,
                                            @RequestParam(required = false, defaultValue = "false")

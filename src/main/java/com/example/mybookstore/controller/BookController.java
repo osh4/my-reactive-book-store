@@ -19,14 +19,14 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    private ResponseEntity<List<BookData>> getBooks() {
+    public ResponseEntity<List<BookData>> getBooks() {
         final List<BookData> books = bookService.getAllBooks();
         return ResponseEntity.ok(books);
     }
 
     @Secured({"ROLE_ADMIN", "ROLE_AUTHOR"})
     @PostMapping
-    private ResponseEntity<?> addBook(@RequestBody BookData bookData) {
+    public ResponseEntity<?> addBook(@RequestBody BookData bookData) {
         try {
             bookService.addBook(bookData);
             return ResponseEntity.ok(bookData);
@@ -38,7 +38,7 @@ public class BookController {
 
     @Secured({"ROLE_ADMIN", "ROLE_AUTHOR"})
     @DeleteMapping
-    private ResponseEntity<?> removeBook(@RequestBody BookData bookData) {
+    public ResponseEntity<?> removeBook(@RequestBody BookData bookData) {
         try {
             bookService.removeBook(bookData);
             return ResponseEntity.ok("The book was removed");

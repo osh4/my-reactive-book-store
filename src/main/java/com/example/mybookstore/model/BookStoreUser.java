@@ -25,7 +25,7 @@ public class BookStoreUser implements UserDetails {
     @Column
     private String password;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "book_store_users_roles",
             joinColumns = @JoinColumn(name = "book_store_user_email", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "role_name", nullable = false))

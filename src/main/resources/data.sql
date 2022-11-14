@@ -9,13 +9,13 @@ VALUES ('admin@test.com', 'Admin', null, '$2a$10$dXJ3SW6G7P50lGmMkkmwe.7ePbCSemA
         'Author 2');
 
 INSERT INTO role(name)
-VALUES ('ADMIN'),
-       ('AUTHOR');
+VALUES ('ROLE_ADMIN'),
+       ('ROLE_AUTHOR');
 
 INSERT INTO book_store_users_roles(book_store_user_email, role_name)
-VALUES ('admin@test.com', 'ADMIN'),
-       ('author1@test.com', 'AUTHOR'),
-       ('author2@test.com', 'AUTHOR');
+VALUES ('admin@test.com', 'ROLE_ADMIN'),
+       ('author1@test.com', 'ROLE_AUTHOR'),
+       ('author2@test.com', 'ROLE_AUTHOR');
 
 INSERT INTO book(title, description, price, publishing_date, author_email)
 VALUES ('Test book 1', 'Amazing 1st test book', 12.2, '2010-01-01', 'author1@test.com'),
