@@ -1,13 +1,15 @@
 package com.example.mybookstore.service;
 
 import com.example.mybookstore.data.AuthorData;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
 public interface AuthorService {
-    List<AuthorData> getAllAuthors();
+    Flux<AuthorData> getAllAuthors();
 
-    void addAuthor(AuthorData author);
+    Mono<String> addAuthor(AuthorData author);
 
-    void removeAuthor(AuthorData author, boolean removeBooks);
+    Mono<String> removeAuthor(AuthorData author, boolean removeBooks);
 }

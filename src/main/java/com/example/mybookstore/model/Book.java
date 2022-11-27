@@ -1,27 +1,32 @@
 package com.example.mybookstore.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.domain.Persistable;
+import org.springframework.data.relational.core.mapping.Table;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Entity
-@Getter
-@Setter
-public class Book {
-    @Id
-    @Column(nullable = false, unique = true)
-    private String title;
+import static java.util.Objects.nonNull;
 
-    @Column(nullable = false)
+@Data
+@Table("books")
+public class Book implements Persistable<String> {
+    @Id
+    private String title;
     private String description;
-    @Column(nullable = false)
     private LocalDate publishingDate;
-    @Column(nullable = false, scale = 2, precision = 10)
     private BigDecimal price;
-    @ManyToOne
-    @JoinColumn(referencedColumnName = "email", nullable = false)
-    private Author author;
+    private String authorEmail;
+
+    @Override
+    public String getId() {
+        return title;
+    }
+
+    @Override
+    public boolean isNew() {
+        return nonNull(title);
+    }
 }

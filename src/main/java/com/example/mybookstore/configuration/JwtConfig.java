@@ -11,11 +11,13 @@ import org.springframework.stereotype.Component;
 public class JwtConfig {
     @Value("${jwt.auth.uri:/login}")
     private String authUri;
+    @Value("${jwt.auth.uri:/logout}")
+    private String revokeUri;
     @Value("${jwt.auth.header:Authorization}")
     private String header;
     @Value("${jwt.auth.prefix:Bearer}")
     private String prefix;
-    @Value("${jwt.auth.expiration:86400}")
+    @Value("${jwt.auth.expiration:300}")
     private int expiration;
     @Value("${jwt.auth.secret:JwtSecretKey}")
     private String secret;

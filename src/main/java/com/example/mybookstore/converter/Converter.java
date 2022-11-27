@@ -1,6 +1,7 @@
 package com.example.mybookstore.converter;
 
 import org.apache.commons.collections4.CollectionUtils;
+import reactor.core.publisher.Flux;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,5 +24,9 @@ public interface Converter<S, T> {
             return Collections.emptyList();
         }
         return sourceList.stream().map(this::convert).toList();
+    }
+
+    default Flux<T> convertAll(Flux<S> sourceList) {
+        return sourceList.map(this::convert);
     }
 }
