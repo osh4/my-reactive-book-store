@@ -1,9 +1,8 @@
--- CREATE DATABASE "reactive-book-store";
 set schema 'public';
 
-DROP TABLE IF EXISTS book_store_user;
+DROP TABLE IF EXISTS users;
 
-CREATE TABLE book_store_user
+CREATE TABLE users
 (
     email      varchar(64) PRIMARY KEY,
     name       varchar(64),
@@ -30,7 +29,7 @@ CREATE TABLE roles
     user_emails varchar(64)[]
 );
 
-INSERT INTO book_store_user(email, name, password, roles, birth_date, type)
+INSERT INTO users(email, name, password, roles, birth_date, type)
 VALUES ('admin@test.com', 'Admin', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.7ePbCSemAZgwYRI2srGPAeE24kMEyqK',
         ARRAY ['ROLE_ADMIN'], null, 'ADMIN'),
        ('author1@test.com', 'Author1', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.7ePbCSemAZgwYRI2srGPAeE24kMEyqK',

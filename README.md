@@ -4,7 +4,7 @@
 ### Features
 * Uses reactive stack with R2DBC
 * GET books or authors from DB (no authorization needed)
-* Log in as ADMIN or AUTHOR user (see [schema.sql](src/main/resources/schema.sql) for sample users' data)
+* Log in as ADMIN or AUTHOR user (see [schema.sql](postgres/schema.sql) for sample users' data)
 * Admin could modify authors list, authors could modify book list
 
 ### Configuration
