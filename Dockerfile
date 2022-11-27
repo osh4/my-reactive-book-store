@@ -1,4 +1,4 @@
-FROM openjdk:20
+FROM openjdk:20-ea-15-slim-bullseye
 RUN groupadd bookstoreuser && useradd -m -g bookstoreuser -d /home/bookstoreuser -s /bin/bash bookstoreuser
 USER bookstoreuser:bookstoreuser
 ENV BOOK_SERVICE_HOME=/usr/bookstore
