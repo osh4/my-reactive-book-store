@@ -23,21 +23,16 @@ public class BookReverseConverter implements Converter<BookData, Mono<Book>> {
     public Mono<Book> convert(BookData source) {
         Mono<BookStoreUser> authorMono = userRepository.findById(source.getAuthorEmail())
                 .switchIfEmpty(createAuthorModel(source).flatMap(userRepository::save));
-        Mono<Book> bookMono = Mono.just(new Book()).map(book -> populateFields(book, source));
-        return Mono.zip(bookMono, authorMono, this::setAuthorToBook);
+        Mono<Book.BookBuilder> bookBuilderMono = Mono.just(Book.builder().title(source.getTitle())
+                .description(source.getDescription())
+                .publishingDate(source.getPublishingDate())
+                .price(source.getPrice()));
+        return Mono.zip(bookBuilderMono, authorMono, this::setAuthorToBook);
     }
 
-    private Book setAuthorToBook(Book book, BookStoreUser author) {
-        book.setAuthorEmail(author.getEmail());
-        return book;
-    }
-
-    private Book populateFields(Book book, BookData source) {
-        book.setTitle(source.getTitle());
-        book.setDescription(source.getDescription());
-        book.setPublishingDate(source.getPublishingDate());
-        book.setPrice(source.getPrice());
-        return book;
+    private Book setAuthorToBook(Book.BookBuilder book, BookStoreUser author) {
+        book.authorEmail(author.getEmail());
+        return book.build();
     }
 
     private Mono<BookStoreUser> createAuthorModel(BookData source) {

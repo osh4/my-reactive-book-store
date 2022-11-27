@@ -25,21 +25,23 @@ public class AuthorConverter implements Converter<BookStoreUser, AuthorData> {
 
     @Override
     public AuthorData convert(BookStoreUser source) {
-        AuthorData data = new AuthorData();
-        if (isNull(source)) {
-            return data;
-        }
-        data.setEmail(source.getEmail());
-        data.setName(source.getName());
-        data.setBirthDate(source.getBirthDate());
-        bookRepository.findAllByAuthorEmail(source.getEmail()).subscribe(book -> setBooksToAuthorData(book, data));
-        return data;
+        AuthorData authorData = AuthorData.builder()
+                .email(source.getEmail())
+                .name(source.getName())
+                .birthDate(source.getBirthDate())
+                .build();
+
+        bookRepository.findAllByAuthorEmail(source.getEmail())
+                .map(book -> setBooksToAuthorData(book, authorData))
+                .subscribe();
+        return authorData;
     }
 
-    private void setBooksToAuthorData(Book book, AuthorData data) {
+    private AuthorData setBooksToAuthorData(Book book, AuthorData data) {
         if (isNull(data.getBooks())) {
             data.setBooks(new LinkedHashSet<>());
         }
         data.getBooks().add(bookConverter.convert(book));
+        return data;
     }
 }
