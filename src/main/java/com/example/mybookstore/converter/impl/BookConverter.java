@@ -6,9 +6,7 @@ import com.example.mybookstore.model.Book;
 import com.example.mybookstore.model.BookStoreUser;
 import com.example.mybookstore.repository.UserRepository;
 import org.springframework.stereotype.Component;
-
-import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
+import reactor.core.publisher.Mono;
 
 @Component
 public class BookConverter implements Converter<Book, BookData> {
@@ -20,24 +18,24 @@ public class BookConverter implements Converter<Book, BookData> {
 
     @Override
     public BookData convert(Book source) {
-        BookData data = new BookData();
+        BookData data = BookData.builder()
+                .title(source.getTitle())
+                .description(source.getDescription())
+                .publishingDate(source.getPublishingDate())
+                .price(source.getPrice())
+                .build();
 
-        if (isNull(source)) {
-            return data;
-        }
-        data.setTitle(source.getTitle());
-        data.setDescription(source.getDescription());
-        data.setPublishingDate(source.getPublishingDate());
-        data.setPrice(source.getPrice());
-        if (nonNull(source.getAuthorEmail())) {
-            userRepository.findById(source.getAuthorEmail())
-                    .subscribe(author -> setAuthorData(data, author));
-        }
+        Mono.just(source.getAuthorEmail())
+                .flatMap(userRepository::findById)
+                .map(author -> setAuthorData(data, author))
+                .subscribe();
+
         return data;
     }
 
-    private static void setAuthorData(BookData data, BookStoreUser author) {
+    private BookStoreUser setAuthorData(BookData data, BookStoreUser author) {
         data.setAuthorEmail(author.getEmail());
         data.setAuthorName(author.getName());
+        return author;
     }
 }
