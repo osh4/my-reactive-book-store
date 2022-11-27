@@ -10,6 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserData {
+    public static final UserData EMPTY_USER = new UserData();
     private String email;
     private String password;
 }

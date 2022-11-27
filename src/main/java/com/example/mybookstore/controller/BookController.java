@@ -4,11 +4,12 @@ import com.example.mybookstore.data.BookData;
 import com.example.mybookstore.service.BookService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/book")
@@ -19,33 +20,24 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public ResponseEntity<List<BookData>> getBooks() {
-        final List<BookData> books = bookService.getAllBooks();
-        return ResponseEntity.ok(books);
+    public Flux<BookData> getBooks() {
+        return bookService.getAllBooks();
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_AUTHOR"})
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_AUTHOR')")
     @PostMapping
-    public ResponseEntity<?> addBook(@RequestBody BookData bookData) {
-        try {
-            bookService.addBook(bookData);
-            return ResponseEntity.ok(bookData);
-        } catch (Exception ex) {
-            log.warn(ex.getMessage(), ex);
-            return ResponseEntity.unprocessableEntity().body("Some issues while adding the book");
-        }
+    public Mono<ResponseEntity<String>> addBook(@RequestBody BookData bookData) {
+        return bookService.addBook(bookData)
+                .flatMap(s -> Mono.just(ResponseEntity.accepted().contentType(MediaType.APPLICATION_JSON).body(s)))
+                .onErrorReturn(ResponseEntity.unprocessableEntity().body("Can't add the book"));
     }
 
-    @Secured({"ROLE_ADMIN", "ROLE_AUTHOR"})
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_AUTHOR')")
     @DeleteMapping
-    public ResponseEntity<?> removeBook(@RequestBody BookData bookData) {
-        try {
-            bookService.removeBook(bookData);
-            return ResponseEntity.ok("The book was removed");
-        } catch (Exception ex) {
-            log.warn(ex.getMessage(), ex);
-            return ResponseEntity.unprocessableEntity().body("Some issues while removing the book");
-        }
+    public Mono<ResponseEntity<String>> removeBook(@RequestBody BookData bookData) {
+        return bookService.removeBook(bookData)
+                .flatMap(s -> Mono.just(ResponseEntity.accepted().contentType(MediaType.APPLICATION_JSON).body(s)))
+                .onErrorReturn(ResponseEntity.unprocessableEntity().body("Can't remove the book"));
     }
 
 }

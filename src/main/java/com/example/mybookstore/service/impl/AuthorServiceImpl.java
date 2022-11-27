@@ -3,62 +3,69 @@ package com.example.mybookstore.service.impl;
 import com.example.mybookstore.converter.impl.AuthorConverter;
 import com.example.mybookstore.converter.impl.AuthorReverseConverter;
 import com.example.mybookstore.data.AuthorData;
-import com.example.mybookstore.model.Author;
-import com.example.mybookstore.repository.AuthorRepository;
-import com.example.mybookstore.repository.BookRepository;
+import com.example.mybookstore.exception.EntityNotFoundException;
+import com.example.mybookstore.repository.UserRepository;
 import com.example.mybookstore.service.AuthorService;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
-import java.util.List;
-import java.util.Optional;
 
 @Component
 public class AuthorServiceImpl implements AuthorService {
 
+    //    public static final String AUTHOR_HAS_BOOKS_MSG = "The author has books, please delete all books before deleting the author";
+    public static final String NO_AUTHOR_MSG = "There is no such an author";
     private final AuthorReverseConverter authorReverseConverter;
     private final AuthorConverter authorConverter;
-    private final AuthorRepository authorRepository;
-    private final BookRepository bookRepository;
+    private final UserRepository userRepository;
+
 
     public AuthorServiceImpl(AuthorReverseConverter authorReverseConverter, AuthorConverter authorConverter,
-                             AuthorRepository authorRepository, BookRepository bookRepository) {
+                             UserRepository userRepository) {
         this.authorReverseConverter = authorReverseConverter;
         this.authorConverter = authorConverter;
-        this.authorRepository = authorRepository;
-        this.bookRepository = bookRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
-    public List<AuthorData> getAllAuthors() {
-        return authorConverter.convertAll(authorRepository.findAll());
+    public Flux<AuthorData> getAllAuthors() {
+        return authorConverter.convertAll(userRepository.findAll());
     }
 
     @Override
-    public void addAuthor(AuthorData authorData) {
-        if (authorRepository.findById(authorData.getEmail()).isPresent()) {
-            throw new DuplicateKeyException("The author already exists");
-        }
-
-        authorRepository.save(authorReverseConverter.convert(authorData));
+    public Mono<String> addAuthor(AuthorData authorData) {
+        return userRepository.findById(authorData.getEmail())
+                .flatMap(x -> Mono.error(new DuplicateKeyException("The author already exists")))
+                .switchIfEmpty(authorReverseConverter.convert(authorData).flatMap(userRepository::save))
+                .flatMap(x -> Mono.just("Author successfully added"));
     }
 
+    //    @Override
+//    public void removeAuthor(AuthorData authorData, boolean shouldRemoveBooks) {
+//        userRepository.findById(authorData.getEmail())
+//                .handle((author, sink) -> {
+//                    if (author == null) {
+//                        sink.error(new EntityNotFoundException(NO_AUTHOR_MSG));
+//                    } else if (CollectionUtils.isNotEmpty(author.getBooks()) && !shouldRemoveBooks) {
+//                        sink.error(new EntityExistsException(AUTHOR_HAS_BOOKS_MSG));
+//                    } else {
+//                        if (CollectionUtils.isNotEmpty(author.get())) {
+//                            Mono.fromCallable(() -> transactionalOperator
+//                                            .execute(status -> bookRepository.deleteAll(author.getBooks())))
+//                                    .subscribeOn(jdbcScheduler);
+//                        }
+//                        Mono.fromCallable(() -> transactionalOperator.execute(status -> userRepository.delete(author)))
+//                                .subscribeOn(jdbcScheduler);
+//                    }
+//                });
+//    }
     @Override
-    public void removeAuthor(AuthorData authorData, boolean shouldRemoveBooks) {
-        Optional<Author> authorOptional = authorRepository.findById(authorData.getEmail());
-        if (authorOptional.isEmpty()) {
-            throw new EntityNotFoundException("There is no such an author");
-        }
-        Author author = authorOptional.get();
-        if (CollectionUtils.isNotEmpty(author.getBooks()) && !shouldRemoveBooks) {
-            throw new EntityExistsException("The author has books, please delete all books before deleting the author");
-        }
-        if (CollectionUtils.isNotEmpty(author.getBooks())){
-            bookRepository.deleteAll(author.getBooks());
-        }
-        authorRepository.delete(author);
+    public Mono<String> removeAuthor(AuthorData authorData, boolean shouldRemoveBooks) {
+        return userRepository.findById(authorData.getEmail())
+                .flatMap(userRepository::delete)
+                .flatMap(x -> Mono.just("Author successfully removed"))
+                .switchIfEmpty(Mono.error(new EntityNotFoundException(NO_AUTHOR_MSG)));
     }
 }

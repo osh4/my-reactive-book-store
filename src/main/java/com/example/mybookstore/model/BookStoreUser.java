@@ -1,39 +1,41 @@
 package com.example.mybookstore.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.domain.Persistable;
+import org.springframework.data.relational.core.mapping.Table;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
-@Entity
-@Setter
-@Getter
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-public class BookStoreUser implements UserDetails {
+import static java.util.Objects.nonNull;
+
+@Data
+@Table("book_store_user")
+@Builder(toBuilder = true)
+@NoArgsConstructor
+@AllArgsConstructor
+public class BookStoreUser implements UserDetails, Persistable<String> {
     @Id
-    @Column(nullable = false, unique = true)
     private String email;
-
-    @Column(unique = true)
     private String name;
-
-    @Column
     private String password;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "book_store_users_roles",
-            joinColumns = @JoinColumn(name = "book_store_user_email", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "role_name", nullable = false))
-    private Set<Role> roles = new LinkedHashSet<>();
+    private LocalDate birthDate;
+    private Set<String> roles;
+    private String type;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return getRoles();
+        return this.roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .toList();
     }
 
     @Override
@@ -64,5 +66,15 @@ public class BookStoreUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String getId() {
+        return getEmail();
+    }
+
+    @Override
+    public boolean isNew() {
+        return nonNull(getEmail());
     }
 }
