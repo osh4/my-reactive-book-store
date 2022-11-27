@@ -1,5 +1,6 @@
 package com.example.mybookstore.model;
 
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.domain.Persistable;
@@ -12,6 +13,7 @@ import static java.util.Objects.nonNull;
 
 @Data
 @Table("books")
+@Builder(toBuilder = true)
 public class Book implements Persistable<String> {
     @Id
     private String title;
