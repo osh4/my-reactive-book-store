@@ -18,7 +18,7 @@ import java.util.Set;
 import static java.util.Objects.nonNull;
 
 @Data
-@Table("book_store_user")
+@Table("users")
 @Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
