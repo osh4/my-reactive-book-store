@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.5</version>
+		<version>3.4.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
@@ -14,7 +14,12 @@
 	<name>my-reactive-book-store</name>
 	<description>my-reactive-book-store</description>
 	<properties>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
+		<java.jwt.version>4.4.0</java.jwt.version>
+		<spring.security.web.version>6.2.7</spring.security.web.version>
+		<spring.security.config.version>6.2.7</spring.security.config.version>
+		<r2dbc.postgres.version>0.8.13.RELEASE</r2dbc.postgres.version>
+		<apache.commons.collections.version>4.4</apache.commons.collections.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -32,7 +37,7 @@
 		<dependency>
 			<groupId>io.r2dbc</groupId>
 			<artifactId>r2dbc-postgresql</artifactId>
-			<version>0.8.13.RELEASE</version>
+			<version>${r2dbc.postgres.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -42,6 +47,11 @@
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -55,23 +65,23 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
-			<version>4.4</version>
+			<version>${apache.commons.collections.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.auth0</groupId>
 			<artifactId>java-jwt</artifactId>
-			<version>4.2.2</version>
+			<version>${java.jwt.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-            <version>6.2.7</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-            <version>6.2.7</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.security</groupId>-->
+<!--            <artifactId>spring-security-config</artifactId>-->
+<!--            <version>${spring.security.web.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.security</groupId>-->
+<!--            <artifactId>spring-security-web</artifactId>-->
+<!--            <version>${spring.security.config.version}</version>-->
+<!--        </dependency>-->
 
     </dependencies>
 
