@@ -19,7 +19,7 @@
 		<spring.security.web.version>6.2.7</spring.security.web.version>
 		<spring.security.config.version>6.2.7</spring.security.config.version>
 		<r2dbc.postgres.version>0.8.13.RELEASE</r2dbc.postgres.version>
-		<apache.commons.collections.version>4.4</apache.commons.collections.version>
+		<apache.commons.collections.version>4.5.0</apache.commons.collections.version>
 	</properties>
 	<dependencies>
 		<dependency>
